@@ -27,5 +27,6 @@ module.exports = {
         packageDir: "./"
       }
     ],
+    "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
   },
 }

@@ -3,12 +3,23 @@ import webpack from 'webpack'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import ScriptExtHtmlWebpackPlugin from 'script-ext-html-webpack-plugin'
 import ExtractTextPlugin from 'extract-text-webpack-plugin'
+import WebpackShellPlugin from 'webpack-shell-plugin'
+import nodeExternals from 'webpack-node-externals'
+import HtmlWebpackHarddiskPlugin from 'html-webpack-harddisk-plugin'
+
+const BUILD_PATH = path.join(__dirname, 'build')
 
 export default (env, config) => {
-  console.log(`MODE=${config.mode}`)
-  console.log(`HOT=${config.hot}`)
+  const configName = config.configName
+    ? config.configName.toUpperCase()
+    : 'BUILD'
+  const logVariable = (key, value) =>
+    // eslint-disable-next-line no-console
+    console.log(`${configName}_${key}=${value}`)
+  logVariable('MODE', config.mode)
+  logVariable('HOT', config.hot)
   const DEV = config.mode !== 'production'
-  console.log(`DEV=${DEV}`)
+  logVariable('DEV', DEV)
 
   const extractAppStyles = new ExtractTextPlugin({
     filename: DEV
@@ -51,7 +62,23 @@ export default (env, config) => {
     debug: false,
   }
 
-  return {
+  const common = {
+    devtool: DEV ? 'source-map' : false,
+  }
+
+  const commonModuleRules = [
+    {
+      enforce: 'pre',
+      test: /\.jsx?$/,
+      exclude: /node_modules/,
+      loader: 'eslint-loader',
+    },
+  ]
+
+  const commonPlugins = [new webpack.ProgressPlugin()]
+
+  const client = {
+    ...common,
     name: 'client',
     entry: [
       './src/sass/global.scss',
@@ -61,7 +88,6 @@ export default (env, config) => {
       './src/client.js',
     ],
     target: 'web',
-    devtool: DEV ? 'source-map' : false,
     devServer: {
       hot: config.hot,
       overlay: true,
@@ -70,21 +96,20 @@ export default (env, config) => {
         modules: !DEV,
       },
       port: 3000,
+      proxy: {
+        '/': 'http://localhost:8080',
+      },
     },
     output: {
       filename: DEV
         ? 'scripts/[name].[hash].js'
         : 'scripts/[name].[chunkhash].js',
-      path: path.join(__dirname, 'build'),
+      path: path.join(BUILD_PATH, 'public'),
+      publicPath: '/',
     },
     module: {
       rules: [
-        {
-          enforce: 'pre',
-          test: /\.jsx?$/,
-          exclude: /node_modules/,
-          loader: 'eslint-loader',
-        },
+        ...commonModuleRules,
         {
           test: /\.jsx?$/,
           loader: 'babel-loader',
@@ -143,14 +168,95 @@ export default (env, config) => {
       ],
     },
     plugins: [
+      ...commonPlugins,
       extractAppStyles,
-      new webpack.ProgressPlugin(),
       new HtmlWebpackPlugin({
-        template: 'src/index.html',
+        template: 'src/index.ejs',
+        filename: '../index.ejs',
+        alwaysWriteToDisk: true,
       }),
       new ScriptExtHtmlWebpackPlugin({
         defaultAttribute: 'async',
       }),
+      new HtmlWebpackHarddiskPlugin(),
     ],
   }
+
+  const server = {
+    ...common,
+    name: 'server',
+    dependencies: ['client'],
+    entry: './src/server',
+    target: 'async-node',
+    output: {
+      filename: 'server.js',
+      path: BUILD_PATH,
+      libraryTarget: 'commonjs2',
+    },
+    externals: ['./index.js', nodeExternals()],
+    node: {
+      console: false,
+      global: false,
+      process: false,
+      Buffer: false,
+      __filename: false,
+      __dirname: false,
+    },
+    module: {
+      rules: [
+        ...commonModuleRules,
+        {
+          test: /\.jsx?$/,
+          loader: 'babel-loader',
+          exclude: /node_modules/,
+          options: {
+            // cacheDirectory: DEV,
+            plugins: babelPlugins,
+            presets: [
+              [
+                '@babel/preset-env',
+                {
+                  targets: {
+                    node: 'current',
+                  },
+                  ...babelEnvSettings,
+                },
+              ],
+              ...babelPresets,
+            ],
+          },
+        },
+        {
+          test: /\.(css|scss|sass)$/,
+          exclude: /node_modules/,
+          use: [
+            {
+              loader: 'css-loader/locals', // translates CSS into CommonJS
+              options: {
+                ...cssLoaderOptions,
+                importLoaders: 0,
+              },
+            },
+            {
+              loader: 'sass-loader', // compiles Sass to CSS
+              options: sassLoaderOptions,
+            },
+          ],
+        },
+      ],
+    },
+    plugins: [
+      ...commonPlugins,
+      ...(DEV
+        ? [
+            new webpack.NoEmitOnErrorsPlugin(),
+            new WebpackShellPlugin({
+              onBuildEnd: ['nodemon --watch build/server.js build/server.js'],
+            }),
+          ]
+        : []),
+    ],
+  }
+
+  return [client, server]
 }
