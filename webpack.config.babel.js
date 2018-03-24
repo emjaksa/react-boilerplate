@@ -15,7 +15,6 @@ export default (env, config) => {
       ? 'styles/[name].[hash].css'
       : 'styles/[name].[chunkhash].css',
     disable: config.hot,
-    // allChunks: true,
   })
 
   const cssLoaderOptions = {
@@ -34,14 +33,18 @@ export default (env, config) => {
 
   const babelPlugins = [
     'transform-decorators-legacy',
-    // // ['relay', { schema: path.resolve(BUILD_PATH, './schema.json') }],
     'lodash',
+    ...(DEV
+      ? []
+      : [
+          '@babel/plugin-transform-react-constant-elements',
+          '@babel/plugin-transform-react-inline-elements',
+          'transform-react-remove-prop-types',
+          'transform-react-pure-class-to-function',
+        ]),
+    // // ['relay', { schema: path.resolve(BUILD_PATH, './schema.json') }],
   ]
-  const babelPresets = [
-    '@babel/preset-stage-2',
-    '@babel/preset-react',
-    ...(DEV ? [] : ['react-optimize']),
-  ]
+  const babelPresets = ['@babel/preset-stage-2', '@babel/preset-react']
   const babelEnvSettings = {
     modules: false,
     useBuiltIns: 'entry',
@@ -51,7 +54,7 @@ export default (env, config) => {
   return {
     name: 'client',
     entry: [
-      'normalize.css',
+      './src/sass/global.scss',
       '@babel/polyfill',
       'whatwg-fetch',
       'url-search-params-polyfill',
@@ -116,17 +119,24 @@ export default (env, config) => {
                 loader: 'css-loader', // translates CSS into CommonJS
                 options: cssLoaderOptions,
               },
-              // {
-              //   loader: 'postcss-loader',
-              //   options: {
-              //     sourceMap: DEV,
-              //     plugins: [PostcssCssnextPlugin(), PostcssFlexbugsFixes()],
-              //   },
-              // },
-              // {
-              //   loader: 'sass-loader', // compiles Sass to CSS
-              //   options: sassLoaderOptions,
-              // },
+              {
+                loader: 'postcss-loader',
+                options: {
+                  sourceMap: DEV,
+                  plugins() {
+                    /* eslint-disable global-require */
+                    return [
+                      require('postcss-cssnext'),
+                      require('postcss-flexbugs-fixes'),
+                    ]
+                    /* eslint-enable global-require */
+                  },
+                },
+              },
+              {
+                loader: 'sass-loader', // compiles Sass to CSS
+                options: sassLoaderOptions,
+              },
             ],
           }),
         },

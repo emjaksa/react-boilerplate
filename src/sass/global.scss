@@ -1,0 +1,22 @@
+@import "~normalize.css";
+
+* {
+  outline: none;
+  box-sizing: border-box;
+}
+
+html {
+  font-family: $font-family;
+  font-weight: $font-weight-light;
+  color: $text-color;
+}
+
+a {
+  text-decoration: none;
+
+  &:link,
+  &:visited {
+    text-decoration: inherit;
+    color: inherit;
+  }
+}

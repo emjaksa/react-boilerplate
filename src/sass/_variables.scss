@@ -1,0 +1,26 @@
+// Variables
+
+//== Typography
+$font-fallback: Arial, Helvetica, sans-serif !default;
+$font-family: 'Roboto', $font-fallback !default;
+$font-weight-light: 300 !default;
+$font-weight-regular: 400 !default;
+$font-weight-bold: 700 !default;
+
+//== Colors
+$text-color: #333333 !default;
+
+//== Spacing
+$pad-xs: 6px !default;
+$pad-sm: $pad-xs * 2 !default;
+$pad-md: $pad-xs * 3 !default;
+$pad-lg: $pad-xs * 4 !default;
+$pad-xl: $pad-xs * 5 !default;
+
+$container-padding: $pad-md !default;
+
+//== Dimensions
+$max-desktop-width: 1366px !default;
+$tablet-min-width-portrait: 768px !default;
+$tablet-max-width-portrait: 1024px !default;
+$border-radius: 4px !default;
