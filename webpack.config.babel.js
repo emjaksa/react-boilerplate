@@ -6,7 +6,11 @@ import ExtractTextPlugin from 'extract-text-webpack-plugin'
 import WebpackShellPlugin from 'webpack-shell-plugin'
 import nodeExternals from 'webpack-node-externals'
 import HtmlWebpackHarddiskPlugin from 'html-webpack-harddisk-plugin'
+import dotenv from 'dotenv'
 
+dotenv.config()
+
+const { PORT = 8080, DEV_PORT = 3000 } = process.env
 const BUILD_PATH = path.join(__dirname, 'build')
 
 export default (env, config) => {
@@ -20,6 +24,7 @@ export default (env, config) => {
   logVariable('HOT', config.hot)
   const DEV = config.mode !== 'production'
   logVariable('DEV', DEV)
+  logVariable('NODE_ENV', process.env.NODE_ENV)
 
   const extractAppStyles = new ExtractTextPlugin({
     filename: DEV
@@ -64,6 +69,10 @@ export default (env, config) => {
 
   const common = {
     devtool: DEV ? 'source-map' : false,
+    stats: {
+      colors: true,
+      modules: !DEV,
+    },
   }
 
   const commonModuleRules = [
@@ -91,13 +100,10 @@ export default (env, config) => {
     devServer: {
       hot: config.hot,
       overlay: true,
-      stats: {
-        colors: true,
-        modules: !DEV,
-      },
-      port: 3000,
+      port: DEV_PORT,
+      stats: common.stats,
       proxy: {
-        '/': 'http://localhost:8080',
+        '/': `http://localhost:${PORT}`,
       },
     },
     output: {
@@ -171,7 +177,7 @@ export default (env, config) => {
       ...commonPlugins,
       extractAppStyles,
       new HtmlWebpackPlugin({
-        template: 'src/index.ejs',
+        template: 'raw-loader!src/index.ejs',
         filename: '../index.ejs',
         alwaysWriteToDisk: true,
       }),

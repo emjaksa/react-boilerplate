@@ -10,7 +10,7 @@ import App from '../containers/App'
 
 dotenv.config()
 
-const { PORT } = process.env
+const { PORT = 8080 } = process.env
 
 const app = express()
 
