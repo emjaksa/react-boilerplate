@@ -6,6 +6,8 @@ import ExtractTextPlugin from 'extract-text-webpack-plugin'
 import WebpackShellPlugin from 'webpack-shell-plugin'
 import nodeExternals from 'webpack-node-externals'
 import HtmlWebpackHarddiskPlugin from 'html-webpack-harddisk-plugin'
+import StyleLintPlugin from 'stylelint-webpack-plugin'
+
 import dotenv from 'dotenv'
 
 dotenv.config()
@@ -136,7 +138,7 @@ export default (env, config) => {
         },
         {
           test: /\.(css|scss|sass)$/,
-          // exclude: /node_modules/,
+          exclude: /node_modules/,
           use: extractAppStyles.extract({
             fallback: {
               loader: 'style-loader',
@@ -185,6 +187,7 @@ export default (env, config) => {
         defaultAttribute: 'async',
       }),
       new HtmlWebpackHarddiskPlugin(),
+      new StyleLintPlugin(),
     ],
   }
 
@@ -192,7 +195,7 @@ export default (env, config) => {
     ...common,
     name: 'server',
     dependencies: ['client'],
-    entry: './src/server',
+    entry: ['@babel/polyfill', './src/server'],
     target: 'async-node',
     output: {
       filename: 'server.js',
@@ -255,7 +258,7 @@ export default (env, config) => {
       ...commonPlugins,
       ...(DEV
         ? [
-            new webpack.NoEmitOnErrorsPlugin(),
+            // new webpack.NoEmitOnErrorsPlugin(),
             new WebpackShellPlugin({
               onBuildEnd: ['nodemon --watch build/server.js build/server.js'],
             }),

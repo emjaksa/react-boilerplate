@@ -1,4 +1,3 @@
-# React Boilerplate
 <div align="center">
   <!-- Dependency Status -->
   <a href="https://david-dm.org/emjaksa/react-boilerplate">
@@ -13,3 +12,6 @@
     <img src="https://travis-ci.org/emjaksa/react-boilerplate.svg" alt="Build Status" />
   </a>
 </div>
+
+# React Boilerplate
+
