@@ -258,7 +258,7 @@ export default (env, config) => {
       ...commonPlugins,
       ...(DEV
         ? [
-            // new webpack.NoEmitOnErrorsPlugin(),
+            new webpack.NoEmitOnErrorsPlugin(),
             new WebpackShellPlugin({
               onBuildEnd: ['nodemon --watch build/server.js build/server.js'],
             }),

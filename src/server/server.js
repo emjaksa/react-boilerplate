@@ -1,12 +1,11 @@
 import path from 'path'
-import React from 'react'
 import express from 'express'
 import helmet from 'helmet'
 import compression from 'compression'
 import bodyParser from 'body-parser'
 import dotenv from 'dotenv'
-import { renderToNodeStream } from 'react-dom/server'
-import App from '../containers/App'
+
+import renderApp from './renderApp'
 
 dotenv.config()
 
@@ -40,21 +39,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use(express.static(path.join(__dirname, 'public')))
 
-app.get('*', (req, res, next) => {
-  res.render('index.ejs', {}, (err, html) => {
-    if (err) {
-      next(err)
-    }
-    const [htmlStart, htmlEnd] = html.split('<!--content-->')
-    res.write(htmlStart)
-    const stream = renderToNodeStream(<App />)
-    stream.pipe(res, { end: false })
-    stream.on('end', () => {
-      res.write(htmlEnd)
-      res.end()
-    })
-  })
-})
+app.get('*', renderApp)
 
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
