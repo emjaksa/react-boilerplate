@@ -6,6 +6,7 @@ import ExtractTextPlugin from 'extract-text-webpack-plugin'
 import WebpackShellPlugin from 'webpack-shell-plugin'
 import nodeExternals from 'webpack-node-externals'
 import HtmlWebpackHarddiskPlugin from 'html-webpack-harddisk-plugin'
+import CopyWebpackPlugin from 'copy-webpack-plugin'
 // eslint-disable-next-line import/no-unresolved,import/extensions
 import StyleLintPlugin from 'stylelint-webpack-plugin'
 
@@ -189,6 +190,16 @@ export default (env, config) => {
       }),
       new HtmlWebpackHarddiskPlugin(),
       new StyleLintPlugin(),
+      new CopyWebpackPlugin(
+        [
+          {
+            context: 'src/public',
+            from: '**/*',
+            to: '',
+          },
+        ],
+        {},
+      ),
     ],
   }
 
