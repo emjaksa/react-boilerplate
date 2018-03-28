@@ -6,6 +6,7 @@ import ExtractTextPlugin from 'extract-text-webpack-plugin'
 import WebpackShellPlugin from 'webpack-shell-plugin'
 import nodeExternals from 'webpack-node-externals'
 import HtmlWebpackHarddiskPlugin from 'html-webpack-harddisk-plugin'
+// eslint-disable-next-line import/no-unresolved,import/extensions
 import StyleLintPlugin from 'stylelint-webpack-plugin'
 
 import dotenv from 'dotenv'
