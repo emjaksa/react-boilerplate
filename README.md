@@ -49,7 +49,7 @@ Build only (production)
 npm run build
 ```
 
-Watch - Dev build, start server and watch for changes (development)
+Dev build, start server and watch for changes (development)
 ```
 npm run watch
 ```
@@ -61,6 +61,7 @@ npm run dev
 
 #### Dotenv config
 Create ``.env`` file in project root
+
 Following options are available
 ```
 # Port express server will start on
