@@ -15,6 +15,56 @@
 
 # React Boilerplate
 
-### Features
+## Features
 
-* 
+* React
+* Redux
+* React Router v4
+* Express
+* SSR (streaming)
+* Jest & Enzyme for testing
+* Webpack
+* Hot Module Reloading
+* SASS
+* CSS Modules
+* Babel
+* Post-css
+
+## Gettings Started
+
+Clone the repository
+```
+git clone https://github.com/emjaksa/react-boilerplate
+cd react-boilerplate
+npm install
+``` 
+
+Build and start server (production)
+```
+npm start
+```
+
+Build only (production)
+```
+npm run build
+```
+
+Watch - Dev build, start server and watch for changes (development)
+```
+npm run watch
+```
+
+Dev build only (development)
+```
+npm run dev
+```
+
+#### Dotenv config
+Create ``.env`` file in project root
+Following options are available
+```
+# Port express server will start on
+PORT=8080
+# Port webpack dev server will start on
+DEV_PORT=3002
+```
