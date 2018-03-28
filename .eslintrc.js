@@ -12,7 +12,7 @@ module.exports = {
     browser: true,
   },
   rules: {
-    // We automatically convert pure class to function in release mode by
+    // We automatically convert pure class to function for production
     // babel-plugin-transform-react-pure-class-to-function
     'react/prefer-stateless-function': 'off',
     // Allow .js files to use JSX syntax
