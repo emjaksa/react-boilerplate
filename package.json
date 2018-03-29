@@ -92,7 +92,7 @@
     "stylelint-config-standard": "^18.2.0",
     "stylelint-no-unsupported-browser-features": "^2.0.0",
     "stylelint-webpack-plugin": "git+https://github.com/emjaksa/stylelint-webpack-plugin.git",
-    "webpack": "^4.2.0",
+    "webpack": "^4.3.0",
     "webpack-cli": "^2.0.13",
     "webpack-dev-server": "^3.1.1",
     "webpack-node-externals": "^1.6.0",
@@ -107,6 +107,8 @@
     "express": "^4.16.3",
     "helmet": "^3.12.0",
     "lodash": "^4.17.5",
+    "mkdirp": "^0.5.1",
+    "morgan": "^1.9.0",
     "normalize.css": "^8.0.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
@@ -115,7 +117,9 @@
     "redux": "^3.7.2",
     "serialize-javascript": "^1.4.0",
     "url-search-params-polyfill": "^3.0.0",
-    "whatwg-fetch": "^2.0.3"
+    "whatwg-fetch": "^2.0.3",
+    "winston": "^3.0.0-rc3",
+    "winston-daily-rotate-file": "^3.0.1"
   },
   "browserslist": [
     "> 1%",

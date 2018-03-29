@@ -4,7 +4,9 @@ import helmet from 'helmet'
 import compression from 'compression'
 import bodyParser from 'body-parser'
 import dotenv from 'dotenv'
+import morgan from 'morgan'
 
+import { stream } from './logger'
 import renderApp from './renderApp'
 
 dotenv.config()
@@ -15,6 +17,7 @@ const app = express()
 
 app.enable('trust proxy')
 // setup the logger
+app.use(morgan('combined', { stream }))
 
 app.use(
   helmet({

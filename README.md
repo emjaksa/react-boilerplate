@@ -67,5 +67,7 @@ Following options are available
 # Port express server will start on
 PORT=8080
 # Port webpack dev server will start on
-DEV_PORT=3002
+DEV_PORT=3000
+# Log directory
+# LOG_DIR=/var/log
 ```
