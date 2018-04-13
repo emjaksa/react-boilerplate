@@ -3,7 +3,7 @@ import winston from 'winston'
 import mkdirp from 'mkdirp'
 import DailyRotateFile from 'winston-daily-rotate-file'
 
-const { LOG_DIR = path.join(__dirname, 'log') } = process.env
+const { LOG_DIR = path.join(process.cwd(), 'log') } = process.env
 
 mkdirp.sync(LOG_DIR)
 
