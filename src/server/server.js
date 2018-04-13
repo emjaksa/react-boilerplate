@@ -5,13 +5,18 @@ import compression from 'compression'
 import bodyParser from 'body-parser'
 import dotenv from 'dotenv'
 import morgan from 'morgan'
+import mongoose from 'mongoose'
+import graphqlHTTP from 'express-graphql'
+// import passport from 'passport'
+// import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt'
 
-import { stream } from './logger'
+import { stream, logger } from './logger'
 import renderApp from './renderApp'
+import schema from '../data/schema'
 
 dotenv.config()
 
-const { PORT = 8080 } = process.env
+const { PORT = 8080, MONGODB_URI } = process.env
 
 const app = express()
 
@@ -42,9 +47,49 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use(express.static(path.join(__dirname, 'public')))
 
-app.get('*', renderApp)
+if (!MONGODB_URI) {
+  throw new Error('MONGODB_URI env variable must be set.')
+}
 
-app.listen(PORT, () => {
-  // eslint-disable-next-line no-console
-  console.log(`Listening on port ${PORT}!`)
-})
+;(async () => {
+  // const opts = {}
+  // opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken()
+  // opts.secretOrKey = 'secret'
+  // opts.issuer = 'accounts.examplesoft.com'
+  // opts.audience = 'yoursite.net'
+  // passport.use(
+  //   new JwtStrategy(opts, (payload, done) => {
+  //     console.log(payload)
+  //     return done(null, {
+  //       id: '1234567890',
+  //       email: 'emjaksa@gmail.com',
+  //     })
+  //   }),
+  // )
+
+  mongoose.connect(MONGODB_URI, {
+    reconnectTries: 30,
+  })
+
+  try {
+    await mongoose.connection
+    logger.info('Mongoose default connection open')
+  } catch (error) {
+    logger.error(`Mongoose default connection error: ${error}`)
+  }
+
+  app.use(
+    '/graphql',
+    graphqlHTTP({
+      schema,
+      graphiql: true,
+    }),
+  )
+
+  app.get('*', renderApp)
+
+  app.listen(PORT, () => {
+    // eslint-disable-next-line no-console
+    console.log(`Listening on port ${PORT}!`)
+  })
+})()
